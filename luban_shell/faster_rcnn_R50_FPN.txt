@@ -1,0 +1,31 @@
+Called with args:
+Namespace(batch_size=8, cfg_file='/nfs/project/libo_i/Boosting/configs/baselines/e2e_faster_rcnn_R-50-FPN_1x.yaml', cuda=True, dataset='coco2017', disp_interval=20, iter_size=4, load_ckpt=None, load_detectron=None, lr=None, lr_decay_gamma=None, no_save=False, num_workers=4, optimizer=None, resume=False, set_cfgs=[], start_step=0, use_tfboard=True)
+effective_batch_size = batch_size * iter_size = 8 * 4
+Adaptive config changes:
+    effective_batch_size: 16 --> 32
+    NUM_GPUS:             8 --> 1
+    IMS_PER_BATCH:        2 --> 8
+Adjust BASE_LR linearly according to batch_size change:
+    BASE_LR: 0.02 --> 0.01
+Adjust SOLVER.STEPS and SOLVER.MAX_ITER linearly based on effective_batch_size change:
+    SOLVER.STEPS: [0, 60000, 80000] --> [0, 30000, 40000]
+    SOLVER.MAX_ITER: 90000 --> 45000
+Scale FPN rpn_proposals collect size directly propotional to the change of IMS_PER_BATCH:
+    cfg.FPN.RPN_COLLECT_SCALE: 4.0
+Number of data loading threads: 4
+loading annotations into memory...
+Done (t=23.48s)
+creating index...
+index created!
+INFO json_dataset.py: 298: Loading cached gt_roidb from /nfs/project/libo_i/Boosting/data/cache/coco_2017_train_gt_roidb.pkl
+INFO roidb.py:  50: Appending horizontally-flipped training examples...
+INFO roidb.py:  52: Loaded dataset: coco_2017_train
+INFO roidb.py: 143: Filtered 2042 roidb entries: 236574 -> 234532
+INFO roidb.py:  69: Computing image aspect ratios and ordering the ratios...
+INFO roidb.py:  71: done
+INFO roidb.py:  75: Computing bounding-box regression targets...
+INFO roidb.py:  77: done
+INFO train_net_step.py: 233: 234532 roidb entries
+INFO train_net_step.py: 234: Takes 839.55 sec(s) to construct roidb
+INFO train_net_step.py: 378: Training starts !
+INFO net.py:  72: Changing learning rate 0.000000 -> 0.003333

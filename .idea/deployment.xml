@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="Always" serverName="boosting">
+    <serverData>
+      <paths name="boosting">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/nfs/project/libo_i/Boosting" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+          <excludedPaths>
+            <excludedPath path="/nfs/project/libo_i/Boosting/data" />
+            <excludedPath path="/nfs/project/libo_i/Boosting/luban_shell/Outputs" />
+            <excludedPath path="/nfs/project/libo_i/Boosting/luban_shell/FPN_DISTRIBUTE/Outputs" />
+            <excludedPath path="/nfs/project/libo_i/Boosting/Outputs" />
+          </excludedPaths>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
+  </component>
+</project>
