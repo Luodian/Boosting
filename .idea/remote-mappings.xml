@@ -10,6 +10,13 @@
             </list>
           </settings>
         </remote-mappings>
+        <remote-mappings server-id="python@sftp://luban@10.84.217.43:8022/usr/bin/python3">
+          <settings>
+            <list>
+              <mapping local-root="$PROJECT_DIR$" remote-root="/nfs/project/libo_i/Boosting" />
+            </list>
+          </settings>
+        </remote-mappings>
       </list>
     </list>
   </component>

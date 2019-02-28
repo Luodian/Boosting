@@ -175,6 +175,9 @@ __C.DATA_LOADER.NUM_THREADS = 4
 # Inference ('test') options
 # ---------------------------------------------------------------------------- #
 __C.TEST = AttrDict()
+__C.TEST.ANCHOR_OUT = False
+__C.TEST.ANCHOR_VIS = False
+__C.TEST.PROPOSALS_OUT = False
 
 # Datasets to test on
 # Available dataset list: datasets.dataset_catalog.DATASETS.keys()

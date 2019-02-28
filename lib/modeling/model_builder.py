@@ -246,6 +246,12 @@ class Generalized_RCNN(nn.Module):
             return_dict['rois'] = rpn_ret['rois']
             return_dict['cls_score'] = cls_score
             return_dict['bbox_pred'] = bbox_pred
+            if cfg.TEST.PROPOSALS_OUT:
+                import os
+                import json
+                path = "/nfs/project/libo_i/Boosting/Anchor_Info"
+                with open(os.path.join(path, "proposals.json"), "w") as fp:
+                    json.dump(rpn_ret['rois'][:, 1:5].tolist(), fp)
 
         return return_dict
 
