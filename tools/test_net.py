@@ -93,8 +93,12 @@ if __name__ == '__main__':
     elif args.dataset == "coco2017_100":
         cfg.TEST.DATASETS = ('coco_2017_val_100',)
         cfg.MODEL.NUM_CLASSES = 81
+    # coco2017_train200
     elif args.dataset == "coco2017_5":
         cfg.TEST.DATASETS = ('coco_2017_val_5',)
+        cfg.MODEL.NUM_CLASSES = 81
+    elif args.dataset == "coco2017_train200":
+        cfg.TEST.DATASETS = ('coco_2017_train_200',)
         cfg.MODEL.NUM_CLASSES = 81
     elif args.dataset == "keypoints_coco2017":
         cfg.TEST.DATASETS = ('keypoints_coco_2017_val',)

@@ -249,7 +249,7 @@ def test_net(
 	
 	# cfg.TEST.PROPOSALS_OUT or cfg.TEST.ANCHOR_OUT
 	dict_all = {}
-	with open("/nfs/project/libo_i/IOU.pytorch/data/cache/coco_2017_val_100_gt_roidb.pkl", 'rb') as fp:
+	with open("/nfs/project/libo_i/Boosting/data/cache/coco_2017_train_200_gt_roidb.pkl", 'rb') as fp:
 		cached_roidb = pickle.load(fp)
 	assert len(roidb) == len(cached_roidb)
 	
@@ -271,7 +271,7 @@ def test_net(
 			box_proposals = None
 		
 		im = cv2.imread(entry['image'])
-		cls_boxes_i, cls_segms_i, cls_keyps_i = im_detect_all(model, im, box_proposals, timers)
+		cls_boxes_i, cls_segms_i, cls_keyps_i, im_scale = im_detect_all(model, im, box_proposals, timers)
 		
 		extend_results(i, all_boxes, cls_boxes_i)
 		if cls_segms_i is not None:
@@ -353,16 +353,23 @@ def test_net(
 					fig.savefig("/nfs/project/libo_i/Boosting/anchor_im_info/{}.png".format(im_name), dpi = dpi)
 					plt.close('all')
 				
-				all_anchors = []
-				for lvl in range(k_min, k_max):
-					with open(os.path.join(path, "anchor_{}.json".format(lvl)), "r") as fp:
-						anchor_lvl = json.load(fp)
-					all_anchors.append(anchor_lvl)
+				with open(os.path.join(path, "anchor_5.json"), "r") as fp:
+					all_anchors = json.load(fp)
+				
 				all_anchors = np.array(all_anchors, dtype = np.float32)
 				logger.info("Anchors num: {}".format(all_anchors.shape[0]))
 				
+				all_anchors = all_anchors / im_scale
+				all_anchors.dtype = np.float32
+				
 				iou_mat = box_utils.bbox_overlaps(all_anchors, gt_i)
 				max_inds = np.argmax(iou_mat, axis = 1)
+				max_element = np.max(iou_mat, axis = 1)
+				
+				thrsh_inds = np.where(max_element > 0.5)
+				max_inds = max_inds[thrsh_inds]
+				all_anchors = all_anchors[thrsh_inds]
+				
 				center_point_distance = []
 				iou_over_gt = []
 				
@@ -375,6 +382,8 @@ def test_net(
 					ac_center_point = ((item[2] - item[0]) / 2, (item[3] - item[1]) / 2)
 					distance = np.sqrt(np.square(gt_center_point[0] - ac_center_point[0]) + np.square(
 						gt_center_point[1] - ac_center_point[1]))
+					
+					distance = distance / ((item[2] - item[0]) / 2 + (matched_gt[2] - matched_gt[0]) / 2)
 					# 计算intersect面积
 					center_point_distance.append(distance)
 					iw = min(item[2], matched_gt[2]) - max(item[0], matched_gt[0]) + 1
@@ -401,8 +410,22 @@ def test_net(
 				# for item in proposals_lvl:
 				# 	center_point_lvl.append(((item[2] - item[0]) / 2, (item[3] - item[0]) / 2))
 				
+				if gt_i.shape[0] == 0:
+					continue
+				
+				all_proposals = all_proposals / im_scale[0]
+				all_proposals.dtype = np.float32
+				
 				iou_mat = box_utils.bbox_overlaps(all_proposals, gt_i)
 				max_inds = np.argmax(iou_mat, axis = 1)
+				max_element = np.max(iou_mat, axis = 1)
+				thrsh_inds = np.where(max_element >= 0)
+				max_inds = max_inds[thrsh_inds]
+				all_proposals = all_proposals[thrsh_inds]
+				
+				# IOU(Intersection Over Union)
+				max_element = max_element[thrsh_inds]
+				
 				center_point_distance = []
 				iou_over_gt = []
 				
@@ -410,11 +433,24 @@ def test_net(
 					# item是迭代中的pp, matched_gt是迭代中的ground_truth
 					matched_gt_ind = max_inds[int(ind)]
 					matched_gt = gt_i[matched_gt_ind]
-					gt_center_point = ((matched_gt[2] - matched_gt[0] + 1) / 2, (matched_gt[3] - matched_gt[1] + 1)
-					                   / 2)
-					pp_center_point = ((item[2] - item[0]) / 2, (item[3] - item[1]) / 2)
-					distance = np.sqrt(np.square(gt_center_point[0] - pp_center_point[0]) + np.square(
-						gt_center_point[1] - pp_center_point[1]))
+					matched_gt_width = matched_gt[2] - matched_gt[0] + 1
+					matched_gt_height = matched_gt[3] - matched_gt[1] + 1
+					
+					gt_center_point = (matched_gt_width / 2, matched_gt_height / 2)
+					
+					pp_width = item[2] - item[0] + 1
+					pp_height = item[3] - item[1] + 1
+					
+					pp_center_point = (pp_width / 2, pp_height / 2)
+					
+					distance = np.sqrt(np.square(gt_center_point[0] - pp_center_point[0]) + np.square(gt_center_point[1] - pp_center_point[1]))
+					
+					# DoC: Distance of Centers(normalized)
+					dis_width = matched_gt_width / 2 + pp_width / 2
+					dis_height = matched_gt_height / 2 + pp_height / 2
+					
+					distance = distance / np.sqrt(np.square(dis_width) + np.square(dis_height))
+					
 					# 计算intersect面积
 					center_point_distance.append(distance)
 					iw = min(item[2], matched_gt[2]) - max(item[0], matched_gt[0]) + 1
@@ -424,19 +460,21 @@ def test_net(
 						if ih > 0:
 							intersect = iw * ih
 					
-					gt_area = (matched_gt[2] - matched_gt[0] + 1) * (matched_gt[3] - matched_gt[1] + 1)
+					gt_area = matched_gt_height * matched_gt_width
 					assert gt_area > 0
+					# Intersection Over GT
 					iou_over_gt.append(intersect / gt_area)
 				
 				center_point_distance = np.array(center_point_distance, dtype = np.float32)
 				iou_over_gt = np.array(iou_over_gt, dtype = np.float32)
-				dict_i['pp_center_point_distance'] = center_point_distance
-				dict_i['pp_iou_over_gt'] = iou_over_gt
+				dict_i['pp_DoC'] = center_point_distance.tolist()
+				dict_i['pp_IOG'] = iou_over_gt.tolist()
+				dict_i['pp_IOU'] = max_element.tolist()
 			
 			dict_all[im_name] = dict_i
 		
 		if i == 99:
-			with open(os.path.join(path, "regression_info.json"), "w") as fp:
+			with open(os.path.join(path, "regression_info_norm.json"), "w") as fp:
 				json.dump(dict_all, fp)
 		
 		if cfg.VIS:

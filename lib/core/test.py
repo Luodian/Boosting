@@ -107,7 +107,7 @@ def im_detect_all(model, im, box_proposals=None, timers=None):
     else:
         cls_keyps = None
 
-    return cls_boxes, cls_segms, cls_keyps
+    return cls_boxes, cls_segms, cls_keyps, im_scale
 
 
 def im_conv_body_only(model, im, target_scale, target_max_size):

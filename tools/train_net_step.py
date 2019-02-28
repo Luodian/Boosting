@@ -95,6 +95,10 @@ def parse_args():
 		help = 'Output directory to save checkpoint file.'
 	)
 	
+	parser.add_argument(
+		'--my_output', help = 'Self define one output directory',
+		action = 'store_true')
+	
 	# Epoch
 	parser.add_argument(
 		'--start_step',
@@ -159,6 +163,9 @@ def main():
 	
 	if args.dataset == "coco2017":
 		cfg.TRAIN.DATASETS = ('coco_2017_train',)
+		cfg.MODEL.NUM_CLASSES = 81
+	elif args.dataset == "coco2017_train200":
+		cfg.TRAIN.DATASETS = ('coco_2017_train_200',)
 		cfg.MODEL.NUM_CLASSES = 81
 	elif args.dataset == "keypoints_coco2017":
 		cfg.TRAIN.DATASETS = ('keypoints_coco_2017_train',)
@@ -332,7 +339,7 @@ def main():
 			# There is a bug in optimizer.load_state_dict on Pytorch 0.3.1.
 			# However it's fixed on master.
 			optimizer.load_state_dict(checkpoint['optimizer'])
-			# misc_utils.load_optimizer_state_dict(optimizer, checkpoint['optimizer'])
+		# misc_utils.load_optimizer_state_dict(optimizer, checkpoint['optimizer'])
 		del checkpoint
 		torch.cuda.empty_cache()
 	
@@ -347,10 +354,11 @@ def main():
 	
 	### Training Setups ###
 	args.run_name = misc_utils.get_run_name() + '_step'
-	# output_dir = misc_utils.get_output_dir(args, args.run_name)
-	output_dir = args.output_dir
+	if not args.my_output:
+		output_dir = misc_utils.get_output_dir(args, args.run_name)
+	else:
+		output_dir = args.output_dir
 	args.cfg_filename = os.path.basename(args.cfg_file)
-	
 	if not args.no_save:
 		if not os.path.exists(output_dir):
 			os.makedirs(output_dir)
