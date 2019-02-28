@@ -30,7 +30,7 @@ for item in dict_all:
 	pp_DoC.extend(pp_DoC_i)
 
 plt.subplot(211)
-plt.title("Proposals Norm")
+plt.title("Proposals Norm on Train 200")
 plt.scatter(pp_DoC, pp_IOU, c = "b", alpha = 0.5, s = 0.05)
 plt.xlabel("Center Point Distance", fontsize = 8)
 plt.ylabel("IOU", fontsize = 8)

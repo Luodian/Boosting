@@ -105,7 +105,7 @@ DATASETS = {
         ANN_FN:
             _DATA_DIR + '/coco/annotations/instances_train2017.json',
     },
-    'coco_2017_train_200':{
+    'coco_2017_train_200': {
         IM_DIR:
             _DATA_DIR + '/coco/images/train2017',
         ANN_FN:
