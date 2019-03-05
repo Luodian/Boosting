@@ -31,14 +31,27 @@ def smooth_l1_loss(bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_we
 	loss_box = loss_box.view(-1).sum(0) / N
 	return loss_box
 
+
 def quant_smooth_l1_loss(stride, bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_weights, beta = 1.0):
 	"""
-	这里拿到的是B, C*4*3, H,W的预测pred值，要和对应的targets去计算误差。先得还原每一个框和targets.
+	这里拿到的是B, 4*3, H,W的预测pred值，要和对应的targets去计算误差。先得还原每一个框和targets.
+	其中第二维为targets，分别为x,y,w,h
+	代码中我们对pred做量化
 	"""
+	line_pred = bbox_pred.permute(0, 3, 2, 1).reshape(-1, 4)
+	line_pred[:, 0] = (line_pred[:, 0] / (stride / line_pred[:, 2])).cuda().round() * (stride / line_pred[:, 2])
+	line_pred[:, 1] = (line_pred[:, 1] / (stride / line_pred[:, 3])).cuda().round() * (stride / line_pred[:, 3])
+	line_pred[:, 2] = (line_pred[:, 2] / (stride / line_pred[:, 2])).cuda().round() * (stride / line_pred[:, 2])
+	line_pred[:, 3] = (line_pred[:, 3] / (stride / line_pred[:, 3])).cuda().round() * (stride / line_pred[:, 3])
 	
+	quant_bbox_pred = line_pred.reshape(bbox_pred.shape[0], bbox_pred.shape[3], bbox_pred.shape[2], bbox_pred.shape[1])
+	quant_bbox_pred = quant_bbox_pred.permute(0, 3, 2, 1)
 	
-	box_diff = bbox_pred - bbox_targets
-	in_box_diff = bbox_inside_weights * box_diff
+	assert quant_bbox_pred.shape == bbox_pred.shape
+	
+	quant_box_diff = quant_bbox_pred - bbox_targets
+	
+	in_box_diff = bbox_inside_weights * quant_box_diff
 	abs_in_box_diff = torch.abs(in_box_diff)
 	smoothL1_sign = (abs_in_box_diff < beta).detach().float()
 	in_loss_box = smoothL1_sign * 0.5 * torch.pow(in_box_diff, 2) / beta + \

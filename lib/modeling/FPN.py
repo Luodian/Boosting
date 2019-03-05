@@ -427,6 +427,7 @@ def fpn_rpn_losses(**kwargs):
 	"""Add RPN on FPN specific losses."""
 	losses_cls = []
 	losses_bbox = []
+	stride_list = [4, 8, 16, 32, 64]
 	for lvl in range(cfg.FPN.RPN_MIN_LEVEL, cfg.FPN.RPN_MAX_LEVEL + 1):
 		slvl = str(lvl)
 		# Spatially narrow the full-sized RPN label arrays to match the feature map shape
@@ -453,8 +454,14 @@ def fpn_rpn_losses(**kwargs):
 		# Normalization by (1) RPN_BATCH_SIZE_PER_IM and (2) IMS_PER_BATCH is
 		# handled by (1) setting bbox outside weights and (2) SmoothL1Loss
 		# normalizes by IMS_PER_BATCH
-		loss_rpn_bbox_fpn = net_utils.smooth_l1_loss(kwargs['rpn_bbox_pred_fpn' + slvl], rpn_bbox_targets_fpn, rpn_bbox_inside_weights_fpn,
-		                                             rpn_bbox_outside_weights_fpn, beta = 1 / 9)
+		if cfg.RPN.QUANT_TARGET:
+			quant_loss_rpn_bbox_fpn = net_utils.quant_smooth_l1_loss(stride_list[lvl - 1], kwargs['rpn_bbox_pred_fpn' + slvl], rpn_bbox_targets_fpn,
+			                                                         rpn_bbox_inside_weights_fpn,
+			                                                         rpn_bbox_outside_weights_fpn, beta = 1 / 9)
+		else:
+			loss_rpn_bbox_fpn = net_utils.smooth_l1_loss(kwargs['rpn_bbox_pred_fpn' + slvl], rpn_bbox_targets_fpn, rpn_bbox_inside_weights_fpn,
+			                                             rpn_bbox_outside_weights_fpn, beta = 1 / 9)
+		
 		losses_cls.append(loss_rpn_cls_fpn)
 		losses_bbox.append(loss_rpn_bbox_fpn)
 	
