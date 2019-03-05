@@ -61,6 +61,61 @@ plt.rcParams['pdf.fonttype'] = 42  # For editing in Adobe Illustrator
 logger = logging.getLogger(__name__)
 
 
+def stats_calculator(all_proposals, gt_i):
+	iou_mat = box_utils.bbox_overlaps(all_proposals, gt_i)
+	max_inds = np.argmax(iou_mat, axis = 1)
+	max_element = np.max(iou_mat, axis = 1)
+	thrsh_inds = np.where(max_element >= 0)
+	max_inds = max_inds[thrsh_inds]
+	all_proposals = all_proposals[thrsh_inds]
+	
+	# IOU(Intersection Over Union)
+	max_element = max_element[thrsh_inds]
+	
+	center_point_distance = []
+	iou_over_gt = []
+	
+	for ind, item in enumerate(all_proposals):
+		# item是迭代中的pp, matched_gt是迭代中的ground_truth
+		matched_gt_ind = max_inds[int(ind)]
+		matched_gt = gt_i[matched_gt_ind]
+		matched_gt_width = matched_gt[2] - matched_gt[0] + 1
+		matched_gt_height = matched_gt[3] - matched_gt[1] + 1
+		
+		gt_center_point = (matched_gt_width / 2, matched_gt_height / 2)
+		
+		pp_width = item[2] - item[0] + 1
+		pp_height = item[3] - item[1] + 1
+		
+		pp_center_point = (pp_width / 2, pp_height / 2)
+		
+		distance = np.sqrt(np.square(gt_center_point[0] - pp_center_point[0]) + np.square(gt_center_point[1] - pp_center_point[1]))
+		
+		# DoC: Distance of Centers(normalized)
+		dis_width = matched_gt_width / 2 + pp_width / 2
+		dis_height = matched_gt_height / 2 + pp_height / 2
+		
+		distance = distance / np.sqrt(np.square(dis_width) + np.square(dis_height))
+		
+		# 计算intersect面积
+		center_point_distance.append(distance)
+		iw = min(item[2], matched_gt[2]) - max(item[0], matched_gt[0]) + 1
+		intersect = 0
+		if iw > 0:
+			ih = min(item[3], matched_gt[3]) - max(item[1], matched_gt[1]) + 1
+			if ih > 0:
+				intersect = iw * ih
+		
+		gt_area = matched_gt_height * matched_gt_width
+		assert gt_area > 0
+		# Intersection Over GT
+		iou_over_gt.append(intersect / gt_area)
+	
+	center_point_distance = np.array(center_point_distance, dtype = np.float32)
+	iou_over_gt = np.array(iou_over_gt, dtype = np.float32)
+	return max_element, center_point_distance, iou_over_gt
+
+
 def get_eval_functions():
 	# Determine which parent or child function should handle inference
 	if cfg.MODEL.RPN_ONLY:
@@ -406,6 +461,46 @@ def test_net(
 				with open(os.path.join(path, "proposals.json"), "r") as fp:
 					all_proposals = np.array(json.load(fp), dtype = np.float32)
 				
+				with open(os.path.join(path, "boxes.json"), "r") as fp:
+					shifted_boxes = np.array(json.load(fp), dtype = np.float32)
+				
+				all_proposals = all_proposals / im_scale[0]
+				all_proposals.dtype = np.float32
+				
+				shifted_boxes = shifted_boxes / im_scale[0]
+				shifted_boxes.dtype = np.float32
+				
+				if cfg.TEST.ANCHOR_VIS:
+					# Draw stage1 pred_boxes onto im and gt
+					dpi = 200
+					fig = plt.figure(frameon = False)
+					fig.set_size_inches(im.shape[1] / dpi, im.shape[0] / dpi)
+					ax = plt.Axes(fig, [0., 0., 1., 1.])
+					ax.axis('off')
+					fig.add_axes(ax)
+					ax.imshow(im[:, :, ::-1])
+					# 在im上添加gt
+					for item in gt_i:
+						ax.add_patch(
+							plt.Rectangle((item[0], item[1]),
+							              item[2] - item[0],
+							              item[3] - item[1],
+							              fill = False, edgecolor = 'r',
+							              linewidth = 0.6, alpha = 1))
+					
+					# 在im上添加proposals
+					length = len(shifted_boxes)
+					for ind in range(length):
+						item = shifted_boxes[ind]
+						ax.add_patch(
+							plt.Rectangle((item[0], item[1]),
+							              item[2] - item[0],
+							              item[3] - item[1],
+							              fill = False, edgecolor = 'g',
+							              linewidth = 0.3, alpha = 1))
+					
+					fig.savefig("/nfs/project/libo_i/Boosting/anchor_im_info/{}.png".format(im_name), dpi = dpi)
+					plt.close('all')
 				# center_point_lvl = []
 				# for item in proposals_lvl:
 				# 	center_point_lvl.append(((item[2] - item[0]) / 2, (item[3] - item[0]) / 2))
@@ -413,68 +508,23 @@ def test_net(
 				if gt_i.shape[0] == 0:
 					continue
 				
-				all_proposals = all_proposals / im_scale[0]
-				all_proposals.dtype = np.float32
+				assert all_proposals.shape[0] == shifted_boxes.shape[0]
+				pp_IOU, _, pp_IOG = stats_calculator(all_proposals, gt_i)
+				dict_i['pp_IOU'] = pp_IOU.tolist()
+				dict_i['pp_IOG'] = pp_IOG.tolist()
 				
-				iou_mat = box_utils.bbox_overlaps(all_proposals, gt_i)
-				max_inds = np.argmax(iou_mat, axis = 1)
-				max_element = np.max(iou_mat, axis = 1)
-				thrsh_inds = np.where(max_element >= 0)
-				max_inds = max_inds[thrsh_inds]
-				all_proposals = all_proposals[thrsh_inds]
+				bb_IOU, _, bb_IOG = stats_calculator(shifted_boxes, gt_i)
+				dict_i['bb_IOU'] = bb_IOU.tolist()
+				dict_i['bb_IOG'] = bb_IOG.tolist()
 				
-				# IOU(Intersection Over Union)
-				max_element = max_element[thrsh_inds]
+				assert pp_IOU.shape[0] == bb_IOU.shape[0]
 				
-				center_point_distance = []
-				iou_over_gt = []
-				
-				for ind, item in enumerate(all_proposals):
-					# item是迭代中的pp, matched_gt是迭代中的ground_truth
-					matched_gt_ind = max_inds[int(ind)]
-					matched_gt = gt_i[matched_gt_ind]
-					matched_gt_width = matched_gt[2] - matched_gt[0] + 1
-					matched_gt_height = matched_gt[3] - matched_gt[1] + 1
-					
-					gt_center_point = (matched_gt_width / 2, matched_gt_height / 2)
-					
-					pp_width = item[2] - item[0] + 1
-					pp_height = item[3] - item[1] + 1
-					
-					pp_center_point = (pp_width / 2, pp_height / 2)
-					
-					distance = np.sqrt(np.square(gt_center_point[0] - pp_center_point[0]) + np.square(gt_center_point[1] - pp_center_point[1]))
-					
-					# DoC: Distance of Centers(normalized)
-					dis_width = matched_gt_width / 2 + pp_width / 2
-					dis_height = matched_gt_height / 2 + pp_height / 2
-					
-					distance = distance / np.sqrt(np.square(dis_width) + np.square(dis_height))
-					
-					# 计算intersect面积
-					center_point_distance.append(distance)
-					iw = min(item[2], matched_gt[2]) - max(item[0], matched_gt[0]) + 1
-					intersect = 0
-					if iw > 0:
-						ih = min(item[3], matched_gt[3]) - max(item[1], matched_gt[1]) + 1
-						if ih > 0:
-							intersect = iw * ih
-					
-					gt_area = matched_gt_height * matched_gt_width
-					assert gt_area > 0
-					# Intersection Over GT
-					iou_over_gt.append(intersect / gt_area)
-				
-				center_point_distance = np.array(center_point_distance, dtype = np.float32)
-				iou_over_gt = np.array(iou_over_gt, dtype = np.float32)
-				dict_i['pp_DoC'] = center_point_distance.tolist()
-				dict_i['pp_IOG'] = iou_over_gt.tolist()
-				dict_i['pp_IOU'] = max_element.tolist()
+				del _
 			
 			dict_all[im_name] = dict_i
 		
 		if i == 99:
-			with open(os.path.join(path, "regression_info_norm.json"), "w") as fp:
+			with open(os.path.join(path, "regression_info_norm_train200.json"), "w") as fp:
 				json.dump(dict_all, fp)
 		
 		if cfg.VIS:

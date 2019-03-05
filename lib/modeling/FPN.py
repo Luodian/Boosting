@@ -418,7 +418,7 @@ class fpn_rpn_outputs(nn.Module):
 						json.dump(all_anchors_lvl.tolist(), fp)
 				else:
 					del all_anchors_lvl
-					
+				
 				rois_blobs.append(fpn_rpn_rois)
 				score_blobs.append(fpn_rpn_roi_probs)
 				return_dict['rpn_rois_fpn' + slvl] = fpn_rpn_rois
@@ -449,27 +449,21 @@ def fpn_rpn_losses(**kwargs):
 			                               'rpn_bbox_outside_weights_wide_fpn' + slvl][:, :, :h, :w]
 		
 		if cfg.RPN.CLS_ACTIVATION == 'softmax':
-			rpn_cls_logits_fpn = kwargs['rpn_cls_logits_fpn' + slvl].view(
-				b, 2, c // 2, h, w).permute(0, 2, 3, 4, 1).contiguous().view(-1, 2)
+			rpn_cls_logits_fpn = kwargs['rpn_cls_logits_fpn' + slvl].view(b, 2, c // 2, h, w).permute(0, 2, 3, 4, 1).contiguous().view(-1, 2)
 			rpn_labels_int32_fpn = rpn_labels_int32_fpn.contiguous().view(-1).long()
 			# the loss is averaged over non-ignored targets
-			loss_rpn_cls_fpn = F.cross_entropy(
-				rpn_cls_logits_fpn, rpn_labels_int32_fpn, ignore_index = -1)
+			loss_rpn_cls_fpn = F.cross_entropy(rpn_cls_logits_fpn, rpn_labels_int32_fpn, ignore_index = -1)
 		else:  # sigmoid
 			weight = (rpn_labels_int32_fpn >= 0).float()
-			loss_rpn_cls_fpn = F.binary_cross_entropy_with_logits(
-				kwargs['rpn_cls_logits_fpn' + slvl], rpn_labels_int32_fpn.float(), weight,
-				size_average = False)
+			loss_rpn_cls_fpn = F.binary_cross_entropy_with_logits(kwargs['rpn_cls_logits_fpn' + slvl], rpn_labels_int32_fpn.float(), weight,
+			                                                      size_average = False)
 			loss_rpn_cls_fpn /= cfg.TRAIN.RPN_BATCH_SIZE_PER_IM * cfg.TRAIN.IMS_PER_BATCH
 		
 		# Normalization by (1) RPN_BATCH_SIZE_PER_IM and (2) IMS_PER_BATCH is
 		# handled by (1) setting bbox outside weights and (2) SmoothL1Loss
 		# normalizes by IMS_PER_BATCH
-		loss_rpn_bbox_fpn = net_utils.smooth_l1_loss(
-			kwargs['rpn_bbox_pred_fpn' + slvl], rpn_bbox_targets_fpn,
-			rpn_bbox_inside_weights_fpn, rpn_bbox_outside_weights_fpn,
-			beta = 1 / 9)
-		
+		loss_rpn_bbox_fpn = net_utils.smooth_l1_loss(kwargs['rpn_bbox_pred_fpn' + slvl], rpn_bbox_targets_fpn, rpn_bbox_inside_weights_fpn,
+		                                             rpn_bbox_outside_weights_fpn, beta = 1 / 9)
 		losses_cls.append(loss_rpn_cls_fpn)
 		losses_bbox.append(loss_rpn_bbox_fpn)
 	
