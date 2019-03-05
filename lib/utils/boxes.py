@@ -230,7 +230,7 @@ def bbox_transform_inv(boxes, gt_boxes, weights = (1.0, 1.0, 1.0, 1.0)):
 	return targets
 
 
-def quantilize_bbox_transform_inv(boxes, gt_boxes, weights = (1.0, 1.0, 1.0, 1.0)):
+def quantilize_bbox_transform_inv(boxes, gt_boxes, stride, weights = (1.0, 1.0, 1.0, 1.0)):
 	"""Inverse transform that computes target bounding-box regression deltas
 	given proposal boxes and ground-truth boxes. The weights argument should be
 	a 4-tuple of multiplicative weights that are applied to the regression
@@ -254,10 +254,15 @@ def quantilize_bbox_transform_inv(boxes, gt_boxes, weights = (1.0, 1.0, 1.0, 1.0
 	gt_ctr_y = gt_boxes[:, 1] + 0.5 * gt_heights
 	
 	wx, wy, ww, wh = weights
-	targets_dx = wx * (gt_ctr_x - ex_ctr_x) / ex_widths
-	targets_dy = wy * (gt_ctr_y - ex_ctr_y) / ex_heights
-	targets_dw = ww * np.log(gt_widths / ex_widths)
-	targets_dh = wh * np.log(gt_heights / ex_heights)
+	# targets_dx = wx * (gt_ctr_x - ex_ctr_x) / ex_widths
+	# targets_dy = wy * (gt_ctr_y - ex_ctr_y) / ex_heights
+	# targets_dw = ww * np.log(gt_widths / ex_widths)
+	# targets_dh = wh * np.log(gt_heights / ex_heights)
+	
+	targets_dx = wx * np.floor((gt_ctr_x - ex_ctr_x) / stride) * stride / ex_widths
+	targets_dy = wy * np.floor((gt_ctr_y - ex_ctr_y) / stride) * stride / ex_heights
+	targets_dw = ww * np.log(np.floor(gt_widths / stride) * stride / ex_widths)
+	targets_dh = wh * np.log(np.floor(gt_heights / stride) * stride / ex_heights)
 	
 	targets = np.vstack((targets_dx, targets_dy, targets_dw,
 	                     targets_dh)).transpose()

@@ -129,8 +129,14 @@ def _get_rpn_blobs(im_height, im_width, foas, all_anchors, gt_boxes):
 	else:
 		inds_inside = np.arange(all_anchors.shape[0])
 		anchors = all_anchors
-	num_inside = len(inds_inside)
 	
+	# 创造一个map维护范围缩小之后的映射关系，reverse_map[i] = j，表示大范围中的i对应小范围中的j
+	reverse_map = {}
+	if cfg.RPN.QUANT_TARGET:
+		for inds, item in enumerate(inds_inside):
+			reverse_map[item] = inds
+	
+	num_inside = len(inds_inside)
 	logger.debug('total_anchors: %d', total_anchors)
 	logger.debug('inds_inside: %d', num_inside)
 	logger.debug('anchors.shape: %s', str(anchors.shape))
@@ -188,9 +194,36 @@ def _get_rpn_blobs(im_height, im_width, foas, all_anchors, gt_boxes):
 	bg_inds = np.where(labels == 0)[0]
 	
 	bbox_targets = np.zeros((num_inside, 4), dtype = np.float32)
-	bbox_targets[fg_inds, :] = data_utils.compute_targets(
-		anchors[fg_inds, :], gt_boxes[anchor_to_gt_argmax[fg_inds], :]
-	)
+	
+	if cfg.RPN.QUANT_TARGET:
+		# 想办法根据336，168，84这样的关系，去算出在inside_anchors中，挑出来的anchors，分别是在哪一层去挑的。
+		# 使用一个map_to_lvl字典，存每一个inside_anchors中的item，对应的lvl层。
+		map_to_lvl = {}
+		start_idx = 0
+		# 1:336, 2:168, 3:84
+		stride_list = [4, 8, 16, 32, 64]
+		
+		for foa_ind, foa in enumerate(foas):
+			end_idx = start_idx + foa.field_size * foa.field_size * foa.num_cell_anchors
+			# 这里取出的是inds_inside里面符合range的框的位置，我们还要将这些index提取出来
+			inds = np.intersect1d(np.where(inds_inside < end_idx)[0], np.where(inds_inside >= start_idx)[0])
+			# 还原位置
+			level_range_inds = inds_inside[inds]
+			start_idx = end_idx
+			
+			short_level_range_inds = []
+			# 这个尺度是40W的，要映射回20W这个尺度。
+			for item in level_range_inds:
+				short_level_range_inds.append(reverse_map[item])
+			
+			short_level_range_inds = np.array(short_level_range_inds)
+			level_range_fg_inds = np.intersect1d(short_level_range_inds, fg_inds)
+			# logger.info("lvl index: {}".format(level_range_fg_inds.shape))
+			bbox_targets[level_range_fg_inds, :] = data_utils.quant_compute_targets(anchors[level_range_fg_inds, :],
+			                                                                        gt_boxes[anchor_to_gt_argmax[level_range_fg_inds], :],
+			                                                                        stride_list[foa_ind])
+	else:
+		bbox_targets[fg_inds, :] = data_utils.compute_targets(anchors[fg_inds, :], gt_boxes[anchor_to_gt_argmax[fg_inds], :])
 	
 	# Bbox regression loss has the form:
 	#   loss(x) = weight_outside * L(weight_inside * x)

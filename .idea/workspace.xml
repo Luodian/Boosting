@@ -3,9 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="7e0b3537-9523-4fca-90e7-49c8fac865bf" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/core/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/core/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/roi_data/data_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/roi_data/data_utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/roi_data/rpn.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/roi_data/rpn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/utils/net.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils/net.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/utils/boxes.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils/boxes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/stats/infov2.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/stats/infov2.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,93 +15,76 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/Boosting$train_net_step_train_200.coverage" NAME="train_net_step_train_200 Coverage Results" MODIFIED="1551768856727" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
+    <SUITE FILE_PATH="coverage/Boosting$train_net_step_train_200.coverage" NAME="train_net_step_train_200 Coverage Results" MODIFIED="1551784234467" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
     <SUITE FILE_PATH="coverage/Boosting$test_net.coverage" NAME="test_net Coverage Results" MODIFIED="1551253177327" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
     <SUITE FILE_PATH="coverage/Boosting$test_net_on_train200.coverage" NAME="test_net_on_train200 Coverage Results" MODIFIED="1551453933510" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
     <SUITE FILE_PATH="coverage/Boosting$iou_info.coverage" NAME="iou_info Coverage Results" MODIFIED="1551456308282" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools/stats" />
-    <SUITE FILE_PATH="coverage/Boosting$infov2.coverage" NAME="infov2 Coverage Results" MODIFIED="1551618522163" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools/stats" />
+    <SUITE FILE_PATH="coverage/Boosting$infov2.coverage" NAME="infov2 Coverage Results" MODIFIED="1551775587354" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools/stats" />
     <SUITE FILE_PATH="coverage/Boosting$split_coco.coverage" NAME="split_coco Coverage Results" MODIFIED="1551354710614" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools/stats" />
     <SUITE FILE_PATH="coverage/Boosting$train_net_step.coverage" NAME="train_net_step_train_200 Coverage Results" MODIFIED="1551355174276" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
     <SUITE FILE_PATH="coverage/Boosting$test_net_100.coverage" NAME="test_net_100 Coverage Results" MODIFIED="1551685335729" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
     <SUITE FILE_PATH="coverage/Boosting$test_net_5.coverage" NAME="test_net_5 Coverage Results" MODIFIED="1551267165176" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.4802982">
-      <split-first>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/lib/modeling/model_builder.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="414">
-                  <caret line="189" selection-start-line="189" selection-end-line="189" />
-                  <folding>
-                    <element signature="e#0#27#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/lib/modeling/FPN.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="149">
-                  <caret line="435" column="64" selection-start-line="435" selection-start-column="39" selection-end-line="435" selection-end-column="64" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/lib/utils/net.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="180">
-                  <caret line="38" column="4" lean-forward="true" selection-start-line="38" selection-start-column="4" selection-end-line="38" selection-end-column="4" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/lib/utils/boxes.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="2045">
-                  <caret line="221" column="28" lean-forward="true" selection-start-line="221" selection-start-column="28" selection-end-line="221" selection-end-column="28" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/lib/roi_data/rpn.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="391">
-                  <caret line="192" column="5" selection-start-line="192" selection-start-column="5" selection-end-line="192" selection-end-column="5" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/lib/roi_data/data_utils.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="202">
-                  <caret line="103" column="4" selection-start-line="103" selection-start-column="4" selection-end-line="103" selection-end-column="4" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf>
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/lib/roi_data/rpn.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-2104">
-                  <caret line="80" column="13" selection-start-line="80" selection-start-column="13" selection-end-line="80" selection-end-column="13" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/modeling/model_builder.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-129">
+              <caret line="163" selection-start-line="163" selection-end-line="163" />
+              <folding>
+                <element signature="e#0#27#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/modeling/FPN.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="300">
+              <caret line="457" column="43" lean-forward="true" selection-start-line="457" selection-start-column="43" selection-end-line="457" selection-end-column="43" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/utils/net.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="38" column="4" lean-forward="true" selection-start-line="38" selection-start-column="4" selection-end-line="38" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/modeling/rpn_heads.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="330">
+              <caret line="31" selection-start-line="31" selection-end-line="31" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/roi_data/rpn.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="333">
+              <caret line="218" column="69" lean-forward="true" selection-start-line="218" selection-start-column="69" selection-end-line="218" selection-end-column="69" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/tools/train_net_step.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="172">
+              <caret line="375" selection-start-line="375" selection-end-line="375" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -111,10 +95,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>initialize_model_from_cfg</find>
-      <find>Generalized_RCNN</find>
-      <find>maskRCNN</find>
-      <find>generic_rpn_losses</find>
       <find>fpn_rpn_losses</find>
       <find>CollectAndDistributeFpnRpnProposalsOp</find>
       <find>quan</find>
@@ -130,16 +110,20 @@
       <find>add_rpn_blobs</find>
       <find>blobs</find>
       <find>targets</find>
-      <find>compute_targets</find>
       <find>foas</find>
       <find>smooth_l1_loss</find>
       <find>_get_rpn_blobs</find>
       <find>get_rpn_blob_names</find>
       <find>rpn_bbox_targets_wide_fpn</find>
-      <find>rpn_bbox_targets_fpn</find>
       <find>target</find>
-      <find>unmap</find>
       <find>bbox_targets</find>
+      <find>intersect1d</find>
+      <find>fg_inds</find>
+      <find>compute_targets</find>
+      <find>quant_bbox_transform_inv</find>
+      <find>quant_compute_targets</find>
+      <find>unmap</find>
+      <find>rpn_bbox_targets_fpn</find>
       <find>rpn_kwargs</find>
     </findStrings>
   </component>
@@ -167,14 +151,15 @@
         <option value="$PROJECT_DIR$/configs/baselines/e2e_mask_rcnn_R-50-FPN_1x.yaml" />
         <option value="$PROJECT_DIR$/configs/baselines/e2e_mask_rcnn_R-101-FPN_1x.yaml" />
         <option value="$PROJECT_DIR$/tools/stats/iou_info.py" />
-        <option value="$PROJECT_DIR$/tools/stats/infov2.py" />
         <option value="$PROJECT_DIR$/lib/core/test_engine.py" />
-        <option value="$PROJECT_DIR$/lib/utils/boxes.py" />
         <option value="$PROJECT_DIR$/lib/datasets/roidb.py" />
         <option value="$PROJECT_DIR$/lib/modeling/FPN.py" />
         <option value="$PROJECT_DIR$/lib/modeling/model_builder.py" />
         <option value="$PROJECT_DIR$/lib/utils/net.py" />
         <option value="$PROJECT_DIR$/lib/core/config.py" />
+        <option value="$PROJECT_DIR$/tools/stats/infov2.py" />
+        <option value="$PROJECT_DIR$/lib/roi_data/data_utils.py" />
+        <option value="$PROJECT_DIR$/lib/utils/boxes.py" />
         <option value="$PROJECT_DIR$/lib/roi_data/rpn.py" />
       </list>
     </option>
@@ -372,7 +357,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tools/train_net_step.py" />
-      <option name="PARAMETERS" value="--dataset coco2017_train200 --cfg /nfs/project/libo_i/Boosting/configs/baselines/e2e_faster_rcnn_R-50-FPN_1x.yaml --use_tfboard --bs 8 --nw 4 --iter_size 4 --my_output --output /nfs/project/libo_i/Boosting/trash_output" />
+      <option name="PARAMETERS" value="--dataset coco2017_train200 --cfg /nfs/project/libo_i/Boosting/configs/baselines/e2e_faster_rcnn_R-50-FPN_1x.yaml --use_tfboard --bs 8 --nw 4 --iter_size 4 --my_output --output /nfs/project/libo_i/Boosting/trash_output --set RPN.QUANT_TARGET True" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -416,7 +401,7 @@
       <workItem from="1551593748298" duration="7721000" />
       <workItem from="1551616793834" duration="3205000" />
       <workItem from="1551682804208" duration="11061000" />
-      <workItem from="1551751859362" duration="10898000" />
+      <workItem from="1551751859362" duration="22648000" />
     </task>
     <task id="LOCAL-00001" summary="完成了导出pp和ac的步骤，在test_engine里拿到对应每张图片的pp和ac，和gt计算xy指标。">
       <created>1551339686841</created>
@@ -453,11 +438,18 @@
       <option name="project" value="LOCAL" />
       <updated>1551753700415</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Tue Mar/5 15:00缓存">
+      <created>1551769199916</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1551769199916</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="88492000" />
+    <option name="totallyTimeSpent" value="100242000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -477,14 +469,14 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.31528664" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" sideWeight="0.49946752" visible="true" weight="0.3301486" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.28768578" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" sideWeight="0.49946752" visible="true" weight="0.39065817" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32908705" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="8" weight="0.32903227" />
-      <window_info anchor="bottom" id="File Transfer" order="9" weight="0.23225807" />
+      <window_info anchor="bottom" id="Version Control" order="8" weight="0.3280255" />
+      <window_info anchor="bottom" id="File Transfer" order="9" weight="0.2314225" />
       <window_info anchor="bottom" id="Database Changes" order="10" />
       <window_info anchor="bottom" id="Terminal" order="11" weight="0.32908705" />
       <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.5005325" side_tool="true" weight="0.40233546" />
@@ -531,7 +523,8 @@
     <MESSAGE value="修改了计算DOC的指标，现在分别计算IOU，IOG，DOC三个指标，增添了分割coco数据集的代码，修改了gitignore，增加了统计iou的代码。" />
     <MESSAGE value="增加了train_200的接口，在train200上做了分布实验。" />
     <MESSAGE value="在修改rpn target计算之前，进行一次缓存" />
-    <option name="LAST_COMMIT_MESSAGE" value="在修改rpn target计算之前，进行一次缓存" />
+    <MESSAGE value="Tue Mar/5 15:00缓存" />
+    <option name="LAST_COMMIT_MESSAGE" value="Tue Mar/5 15:00缓存" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -547,39 +540,14 @@
           <option name="timeStamp" value="53" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/lib/modeling/model_builder.py</url>
-          <line>189</line>
-          <option name="timeStamp" value="54" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/lib/modeling/model_builder.py</url>
-          <line>163</line>
-          <option name="timeStamp" value="58" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/lib/modeling/model_builder.py</url>
-          <line>185</line>
-          <option name="timeStamp" value="69" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/tools/train_net_step.py</url>
           <line>375</line>
           <option name="timeStamp" value="70" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/lib/modeling/rpn_heads.py</url>
-          <line>31</line>
-          <option name="timeStamp" value="71" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/lib/modeling/rpn_heads.py</url>
           <line>126</line>
           <option name="timeStamp" value="72" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/lib/modeling/FPN.py</url>
-          <line>417</line>
-          <option name="timeStamp" value="77" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/lib/modeling/FPN.py</url>
@@ -605,16 +573,6 @@
           <url>file://$PROJECT_DIR$/lib/utils/net.py</url>
           <line>22</line>
           <option name="timeStamp" value="90" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/lib/roi_data/rpn.py</url>
-          <line>189</line>
-          <option name="timeStamp" value="91" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/lib/roi_data/rpn.py</url>
-          <line>190</line>
-          <option name="timeStamp" value="92" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -776,16 +734,6 @@
     <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.3/remote_sources/1725314906/1405239563/torch/utils/ffi/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/tools/stats/infov2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="314">
-          <caret line="28" column="39" lean-forward="true" selection-start-line="28" selection-start-column="39" selection-end-line="28" selection-end-column="39" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tools/stats/iou_info.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="149">
@@ -855,23 +803,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.3/remote_sources/1725314906/1405239563/torch/utils/data/dataloader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="331">
-          <caret line="226" selection-start-line="226" selection-end-line="226" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/modeling/model_builder.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="414">
-          <caret line="189" selection-start-line="189" selection-end-line="189" />
-          <folding>
-            <element signature="e#0#27#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lib/roi_data/minibatch.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
@@ -879,45 +810,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/modeling/FPN.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="149">
-          <caret line="435" column="64" selection-start-line="435" selection-start-column="39" selection-end-line="435" selection-end-column="64" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lib/datasets/roidb.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
           <caret line="208" column="22" lean-forward="true" selection-start-line="208" selection-start-column="22" selection-end-line="208" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tools/train_net_step.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="506">
-          <caret line="375" column="20" lean-forward="true" selection-start-line="375" selection-start-column="20" selection-end-line="375" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/modeling/rpn_heads.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="31" selection-start-line="31" selection-end-line="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/utils/net.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="38" column="4" lean-forward="true" selection-start-line="38" selection-start-column="4" selection-end-line="38" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/utils/boxes.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2045">
-          <caret line="221" column="28" lean-forward="true" selection-start-line="221" selection-start-column="28" selection-end-line="221" selection-end-column="28" />
         </state>
       </provider>
     </entry>
@@ -931,17 +827,79 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/roi_data/data_utils.py">
+    <entry file="file://$PROJECT_DIR$/tools/stats/infov2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="103" column="4" selection-start-line="103" selection-start-column="4" selection-end-line="103" selection-end-column="4" />
+        <state relative-caret-position="292">
+          <caret line="142" lean-forward="true" selection-start-line="142" selection-end-line="142" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/utils/boxes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="574">
+          <caret line="263" column="79" lean-forward="true" selection-start-line="263" selection-start-column="79" selection-end-line="263" selection-end-column="79" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/utils/net.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="38" column="4" lean-forward="true" selection-start-line="38" selection-start-column="4" selection-end-line="38" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.3/remote_sources/1725314906/1405239563/torch/utils/data/dataloader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="183">
+          <caret line="226" selection-start-line="226" selection-end-line="226" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/modeling/model_builder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-129">
+          <caret line="163" selection-start-line="163" selection-end-line="163" />
+          <folding>
+            <element signature="e#0#27#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/modeling/rpn_heads.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="31" selection-start-line="31" selection-end-line="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/modeling/FPN.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="457" column="43" lean-forward="true" selection-start-line="457" selection-start-column="43" selection-end-line="457" selection-end-column="43" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/roi_data/rpn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="192" column="5" selection-start-line="192" selection-start-column="5" selection-end-line="192" selection-end-column="5" />
+        <state relative-caret-position="333">
+          <caret line="218" column="69" lean-forward="true" selection-start-line="218" selection-start-column="69" selection-end-line="218" selection-end-column="69" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/roi_data/data_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1137">
+          <caret line="108" selection-start-line="108" selection-end-line="108" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tools/train_net_step.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="172">
+          <caret line="375" selection-start-line="375" selection-end-line="375" />
         </state>
       </provider>
     </entry>

@@ -124,7 +124,7 @@ pp_IOG = np.array(pp_IOG, dtype = np.float32)
 bb_IOU = np.array(bb_IOU, dtype = np.float32)
 bb_IOG = np.array(bb_IOG, dtype = np.float32)
 
-piou_inds = np.intersect1d(np.where(pp_IOU <= 1)[0], np.where(pp_IOU >= 0.5)[0])
+piou_inds = np.intersect1d(np.where(pp_IOU <= 0.8)[0], np.where(pp_IOU >= 0.6)[0])
 
 constraint_pIOG = pp_IOG[piou_inds]
 constraint_bIOU = bb_IOU[piou_inds]
