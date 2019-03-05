@@ -410,15 +410,6 @@ class fpn_rpn_outputs(nn.Module):
 				fpn_rpn_rois, fpn_rpn_roi_probs, all_anchors_lvl = self.GenerateProposals_modules[lvl - k_min](
 					fpn_rpn_cls_probs, fpn_rpn_bbox_pred, im_info)
 				
-				path = "/nfs/project/libo_i/Boosting/Anchor_Info"
-				import os
-				import json
-				if cfg.TEST.ANCHOR_OUT:
-					with open(os.path.join(path, "anchor_{}.json".format(lvl)), "w") as fp:
-						json.dump(all_anchors_lvl.tolist(), fp)
-				else:
-					del all_anchors_lvl
-				
 				rois_blobs.append(fpn_rpn_rois)
 				score_blobs.append(fpn_rpn_roi_probs)
 				return_dict['rpn_rois_fpn' + slvl] = fpn_rpn_rois
