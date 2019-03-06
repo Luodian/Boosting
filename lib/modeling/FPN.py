@@ -455,15 +455,16 @@ def fpn_rpn_losses(**kwargs):
 		# handled by (1) setting bbox outside weights and (2) SmoothL1Loss
 		# normalizes by IMS_PER_BATCH
 		if cfg.RPN.QUANT_TARGET:
-			quant_loss_rpn_bbox_fpn = net_utils.quant_smooth_l1_loss(stride_list[lvl - 1], kwargs['rpn_bbox_pred_fpn' + slvl], rpn_bbox_targets_fpn,
+			quant_loss_rpn_bbox_fpn = net_utils.quant_smooth_l1_loss(stride_list[lvl - 2], kwargs['rpn_bbox_pred_fpn' + slvl], rpn_bbox_targets_fpn,
 			                                                         rpn_bbox_inside_weights_fpn,
 			                                                         rpn_bbox_outside_weights_fpn, beta = 1 / 9)
+			losses_bbox.append(quant_loss_rpn_bbox_fpn)
 		else:
 			loss_rpn_bbox_fpn = net_utils.smooth_l1_loss(kwargs['rpn_bbox_pred_fpn' + slvl], rpn_bbox_targets_fpn, rpn_bbox_inside_weights_fpn,
 			                                             rpn_bbox_outside_weights_fpn, beta = 1 / 9)
+			losses_bbox.append(loss_rpn_bbox_fpn)
 		
 		losses_cls.append(loss_rpn_cls_fpn)
-		losses_bbox.append(loss_rpn_bbox_fpn)
 	
 	return losses_cls, losses_bbox
 

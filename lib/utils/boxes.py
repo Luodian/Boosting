@@ -258,11 +258,23 @@ def quantilize_bbox_transform_inv(boxes, gt_boxes, stride, weights = (1.0, 1.0, 
 	# targets_dy = wy * (gt_ctr_y - ex_ctr_y) / ex_heights
 	# targets_dw = ww * np.log(gt_widths / ex_widths)
 	# targets_dh = wh * np.log(gt_heights / ex_heights)
+	eps = np.finfo(np.float32).eps
+	targets_dx_part = np.floor((gt_ctr_x - ex_ctr_x) / stride)
+	targets_dx_part[targets_dx_part == 0] = eps
 	
-	targets_dx = wx * np.floor((gt_ctr_x - ex_ctr_x) / stride) * stride / ex_widths
-	targets_dy = wy * np.floor((gt_ctr_y - ex_ctr_y) / stride) * stride / ex_heights
-	targets_dw = ww * np.log(np.floor(gt_widths / stride) * stride / ex_widths)
-	targets_dh = wh * np.log(np.floor(gt_heights / stride) * stride / ex_heights)
+	targets_dy_part = np.floor((gt_ctr_y - ex_ctr_y) / stride)
+	targets_dy_part[targets_dy_part == 0] = eps
+	
+	targets_dw_part = np.floor(gt_widths / stride)
+	targets_dw_part[targets_dw_part == 0] = eps
+	
+	targets_dh_part = np.floor(gt_heights / stride)
+	targets_dh_part[targets_dh_part == 0] = eps
+	
+	targets_dx = wx * targets_dx_part * stride / ex_widths
+	targets_dy = wy * targets_dy_part * stride / ex_heights
+	targets_dw = ww * np.log(targets_dw_part * stride / ex_widths)
+	targets_dh = wh * np.log(targets_dh_part * stride / ex_heights)
 	
 	targets = np.vstack((targets_dx, targets_dy, targets_dw,
 	                     targets_dh)).transpose()
