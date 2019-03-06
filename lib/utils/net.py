@@ -39,12 +39,16 @@ def quant_smooth_l1_loss(stride, bbox_pred, bbox_targets, bbox_inside_weights, b
 	代码中我们对pred做量化
 	"""
 	line_pred = bbox_pred.permute(0, 3, 2, 1).reshape(-1, 4)
-	line_pred[:, 0] = (line_pred[:, 0] / (stride / line_pred[:, 2])).cuda().round() * (stride / line_pred[:, 2])
-	line_pred[:, 1] = (line_pred[:, 1] / (stride / line_pred[:, 3])).cuda().round() * (stride / line_pred[:, 3])
-	line_pred[:, 2] = (line_pred[:, 2] / (stride / line_pred[:, 2])).cuda().round() * (stride / line_pred[:, 2])
-	line_pred[:, 3] = (line_pred[:, 3] / (stride / line_pred[:, 3])).cuda().round() * (stride / line_pred[:, 3])
 	
-	quant_bbox_pred = line_pred.reshape(bbox_pred.shape[0], bbox_pred.shape[3], bbox_pred.shape[2], bbox_pred.shape[1])
+	new_x = (line_pred[:, 0] / (stride / line_pred[:, 2])).cuda().round() * (stride / line_pred[:, 2])
+	new_y = (line_pred[:, 1] / (stride / line_pred[:, 3])).cuda().round() * (stride / line_pred[:, 3])
+	new_w = (line_pred[:, 2] / (stride / line_pred[:, 2])).cuda().round() * (stride / line_pred[:, 2])
+	new_h = (line_pred[:, 3] / (stride / line_pred[:, 3])).cuda().round() * (stride / line_pred[:, 3])
+	
+	new_line = torch.stack((new_x, new_y, new_w, new_h), 1)
+	# print(torch.version)
+	
+	quant_bbox_pred = new_line.reshape(bbox_pred.shape[0], bbox_pred.shape[3], bbox_pred.shape[2], bbox_pred.shape[1])
 	quant_bbox_pred = quant_bbox_pred.permute(0, 3, 2, 1)
 	
 	assert quant_bbox_pred.shape == bbox_pred.shape
