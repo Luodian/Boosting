@@ -196,51 +196,52 @@ class Generalized_RCNN(nn.Module):
 				return_dict['losses']['loss_rpn_cls'] = loss_rpn_cls
 				return_dict['losses']['loss_rpn_bbox'] = loss_rpn_bbox
 			
-			# bbox loss
-			loss_cls, loss_bbox, accuracy_cls = fast_rcnn_heads.fast_rcnn_losses(
-				cls_score, bbox_pred, rpn_ret['labels_int32'], rpn_ret['bbox_targets'],
-				rpn_ret['bbox_inside_weights'], rpn_ret['bbox_outside_weights'])
-			return_dict['losses']['loss_cls'] = loss_cls
-			return_dict['losses']['loss_bbox'] = loss_bbox
-			return_dict['metrics']['accuracy_cls'] = accuracy_cls
-			
-			if cfg.MODEL.MASK_ON:
-				if getattr(self.Mask_Head, 'SHARE_RES5', False):
-					mask_feat = self.Mask_Head(res5_feat, rpn_ret,
-					                           roi_has_mask_int32 = rpn_ret['roi_has_mask_int32'])
-				else:
-					mask_feat = self.Mask_Head(blob_conv, rpn_ret)
-				mask_pred = self.Mask_Outs(mask_feat)
-				# return_dict['mask_pred'] = mask_pred
-				# mask loss
-				loss_mask = mask_rcnn_heads.mask_rcnn_losses(mask_pred, rpn_ret['masks_int32'])
-				return_dict['losses']['loss_mask'] = loss_mask
-			
-			if cfg.MODEL.KEYPOINTS_ON:
-				if getattr(self.Keypoint_Head, 'SHARE_RES5', False):
-					# No corresponding keypoint head implemented yet (Neither in Detectron)
-					# Also, rpn need to generate the label 'roi_has_keypoints_int32'
-					kps_feat = self.Keypoint_Head(res5_feat, rpn_ret,
-					                              roi_has_keypoints_int32 = rpn_ret['roi_has_keypoint_int32'])
-				else:
-					kps_feat = self.Keypoint_Head(blob_conv, rpn_ret)
-				kps_pred = self.Keypoint_Outs(kps_feat)
-				# return_dict['keypoints_pred'] = kps_pred
-				# keypoints loss
-				if cfg.KRCNN.NORMALIZE_BY_VISIBLE_KEYPOINTS:
-					loss_keypoints = keypoint_rcnn_heads.keypoint_losses(
-						kps_pred, rpn_ret['keypoint_locations_int32'], rpn_ret['keypoint_weights'])
-				else:
-					loss_keypoints = keypoint_rcnn_heads.keypoint_losses(
-						kps_pred, rpn_ret['keypoint_locations_int32'], rpn_ret['keypoint_weights'],
-						rpn_ret['keypoint_loss_normalizer'])
-				return_dict['losses']['loss_kps'] = loss_keypoints
-			
-			# pytorch0.4 bug on gathering scalar(0-dim) tensors
-			for k, v in return_dict['losses'].items():
-				return_dict['losses'][k] = v.unsqueeze(0)
-			for k, v in return_dict['metrics'].items():
-				return_dict['metrics'][k] = v.unsqueeze(0)
+			if not cfg.RPN.QUANT_TARGET:
+				# bbox loss
+				loss_cls, loss_bbox, accuracy_cls = fast_rcnn_heads.fast_rcnn_losses(
+					cls_score, bbox_pred, rpn_ret['labels_int32'], rpn_ret['bbox_targets'],
+					rpn_ret['bbox_inside_weights'], rpn_ret['bbox_outside_weights'])
+				return_dict['losses']['loss_cls'] = loss_cls
+				return_dict['losses']['loss_bbox'] = loss_bbox
+				return_dict['metrics']['accuracy_cls'] = accuracy_cls
+				
+				if cfg.MODEL.MASK_ON:
+					if getattr(self.Mask_Head, 'SHARE_RES5', False):
+						mask_feat = self.Mask_Head(res5_feat, rpn_ret,
+						                           roi_has_mask_int32 = rpn_ret['roi_has_mask_int32'])
+					else:
+						mask_feat = self.Mask_Head(blob_conv, rpn_ret)
+					mask_pred = self.Mask_Outs(mask_feat)
+					# return_dict['mask_pred'] = mask_pred
+					# mask loss
+					loss_mask = mask_rcnn_heads.mask_rcnn_losses(mask_pred, rpn_ret['masks_int32'])
+					return_dict['losses']['loss_mask'] = loss_mask
+				
+				if cfg.MODEL.KEYPOINTS_ON:
+					if getattr(self.Keypoint_Head, 'SHARE_RES5', False):
+						# No corresponding keypoint head implemented yet (Neither in Detectron)
+						# Also, rpn need to generate the label 'roi_has_keypoints_int32'
+						kps_feat = self.Keypoint_Head(res5_feat, rpn_ret,
+						                              roi_has_keypoints_int32 = rpn_ret['roi_has_keypoint_int32'])
+					else:
+						kps_feat = self.Keypoint_Head(blob_conv, rpn_ret)
+					kps_pred = self.Keypoint_Outs(kps_feat)
+					# return_dict['keypoints_pred'] = kps_pred
+					# keypoints loss
+					if cfg.KRCNN.NORMALIZE_BY_VISIBLE_KEYPOINTS:
+						loss_keypoints = keypoint_rcnn_heads.keypoint_losses(
+							kps_pred, rpn_ret['keypoint_locations_int32'], rpn_ret['keypoint_weights'])
+					else:
+						loss_keypoints = keypoint_rcnn_heads.keypoint_losses(
+							kps_pred, rpn_ret['keypoint_locations_int32'], rpn_ret['keypoint_weights'],
+							rpn_ret['keypoint_loss_normalizer'])
+					return_dict['losses']['loss_kps'] = loss_keypoints
+				
+				# pytorch0.4 bug on gathering scalar(0-dim) tensors
+				for k, v in return_dict['losses'].items():
+					return_dict['losses'][k] = v.unsqueeze(0)
+				for k, v in return_dict['metrics'].items():
+					return_dict['metrics'][k] = v.unsqueeze(0)
 		
 		else:
 			# Testing

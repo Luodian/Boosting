@@ -194,29 +194,27 @@ def _get_rpn_blobs(im_height, im_width, foas, all_anchors, gt_boxes):
 	bg_inds = np.where(labels == 0)[0]
 	
 	bbox_targets = np.zeros((num_inside, 4), dtype = np.float32)
-	
 	if cfg.RPN.QUANT_TARGET:
-		# 想办法根据336，168，84这样的关系，去算出在inside_anchors中，挑出来的anchors，分别是在哪一层去挑的。
-		# 使用一个map_to_lvl字典，存每一个inside_anchors中的item，对应的lvl层。
-		map_to_lvl = {}
 		start_idx = 0
 		# 1:336, 2:168, 3:84
 		stride_list = [4, 8, 16, 32, 64]
-		
 		for foa_ind, foa in enumerate(foas):
 			end_idx = start_idx + foa.field_size * foa.field_size * foa.num_cell_anchors
 			# 这里取出的是inds_inside里面符合range的框的位置，我们还要将这些index提取出来
 			inds = np.intersect1d(np.where(inds_inside < end_idx)[0], np.where(inds_inside >= start_idx)[0])
-			# 还原位置
+			# level_range_inds中保存的是符合start_ids <= [....] < end_idx这一个indices序列
 			level_range_inds = inds_inside[inds]
 			start_idx = end_idx
 			
 			short_level_range_inds = []
 			# 这个尺度是40W的，要映射回20W这个尺度。
+			# 即level_range_inds中存的每一个元素都是0~40W范围的，我们需要知道其每个元素i，对应在短序列（0~20W这个序列）中的位置
 			for item in level_range_inds:
 				short_level_range_inds.append(reverse_map[item])
 			
+			# 其中每个元素都是符合range的短序列。
 			short_level_range_inds = np.array(short_level_range_inds)
+			
 			level_range_fg_inds = np.intersect1d(short_level_range_inds, fg_inds)
 			# logger.info("lvl index: {}".format(level_range_fg_inds.shape))
 			bbox_targets[level_range_fg_inds, :] = data_utils.quant_compute_targets(anchors[level_range_fg_inds, :],

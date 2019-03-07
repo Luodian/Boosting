@@ -125,7 +125,6 @@ class fpn(nn.Module):
 				)
 			
 			self.spatial_scale.append(fpn_level_info.spatial_scales[i])
-		
 		#
 		# Step 2: build up starting from the coarsest backbone level
 		#
