@@ -304,7 +304,7 @@ def test_net(
 	
 	# cfg.TEST.PROPOSALS_OUT or cfg.TEST.ANCHOR_OUT
 	dict_all = {}
-	with open("/nfs/project/libo_i/Boosting/data/cache/coco_2017_train_200_gt_roidb.pkl", 'rb') as fp:
+	with open("/nfs/project/libo_i/Boosting/data/cache/coco_2017_val_100_gt_roidb.pkl", 'rb') as fp:
 		cached_roidb = pickle.load(fp)
 	assert len(roidb) == len(cached_roidb)
 	

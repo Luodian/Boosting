@@ -35,11 +35,10 @@ def smooth_l1_loss(bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_we
 def quant_smooth_l1_loss(stride, bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_weights, beta = 1.0):
 	"""
 	这里拿到的是B, 4*3, H,W的预测pred值，要和对应的targets去计算误差。先得还原每一个框和targets.
-	其中第二维为targets，分别为x,y,w,h
+	其中第二维为targets，分别为x,y,h,w
 	代码中我们对pred做量化
 	"""
 	line_pred = bbox_pred.permute(0, 3, 2, 1).reshape(-1, 4)
-	
 	new_x = (line_pred[:, 0] / (stride / line_pred[:, 2])).cuda().round() * (stride / line_pred[:, 2])
 	new_y = (line_pred[:, 1] / (stride / line_pred[:, 3])).cuda().round() * (stride / line_pred[:, 3])
 	new_w = (line_pred[:, 2] / (stride / line_pred[:, 2])).cuda().round() * (stride / line_pred[:, 2])
@@ -47,7 +46,6 @@ def quant_smooth_l1_loss(stride, bbox_pred, bbox_targets, bbox_inside_weights, b
 	
 	new_line = torch.stack((new_x, new_y, new_w, new_h), 1)
 	# print(torch.version)
-	
 	quant_bbox_pred = new_line.reshape(bbox_pred.shape[0], bbox_pred.shape[3], bbox_pred.shape[2], bbox_pred.shape[1])
 	quant_bbox_pred = quant_bbox_pred.permute(0, 3, 2, 1)
 	

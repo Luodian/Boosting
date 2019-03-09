@@ -6,7 +6,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
-
 from core.config import cfg
 from model.roi_pooling.functions.roi_pool import RoIPoolFunction
 from model.roi_crop.functions.roi_crop import RoICropFunction
@@ -19,6 +18,12 @@ import utils.blob as blob_utils
 import utils.net as net_utils
 import utils.resnet_weights_helper as resnet_utils
 import utils.boxes as box_utils
+
+# Use a non-interactive backend
+import matplotlib
+
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 logger = logging.getLogger(__name__)
 
@@ -188,6 +193,96 @@ class Generalized_RCNN(nn.Module):
 				if (k.startswith('rpn_cls_logits') or k.startswith('rpn_bbox_pred'))
 			))
 			loss_rpn_cls, loss_rpn_bbox = rpn_heads.generic_rpn_losses(**rpn_kwargs)
+			
+			if cfg.RPN.VIS_QUANT_TARGET:
+				import numpy as np
+				import json
+				import os
+				import time
+				
+				gt_boxes = []
+				gt_label = roidb[0]['gt_classes']
+				for inds, item in enumerate(gt_label):
+					if item != 0:
+						gt_boxes.append(roidb[0]['boxes'][inds])
+				
+				gt_boxes = np.array(gt_boxes, dtype = np.float32)
+				gt_boxes *= im_info.detach().numpy()[:, 2]
+				
+				path = "/nfs/project/libo_i/Boosting/Targets_Info"
+				if not os.path.exists(path):
+					os.makedirs(path)
+				b, c, h, w = rpn_kwargs['rpn_cls_logits_fpn3'].shape
+				sample_targets = rpn_kwargs['rpn_bbox_targets_wide_fpn3'][:, :, :h, :w]
+				
+				line_targets = sample_targets.detach().data.cpu().numpy()
+				with open(os.path.join(path, "quant_anchors.json"), "r") as fp:
+					quant_anchors = np.array(json.load(fp), dtype = np.float32)
+					quant_anchors = quant_anchors[:h, :w]
+				
+				line_targets = line_targets[:, 4:8, :, :].transpose((0, 2, 3, 1)).reshape(quant_anchors.shape)
+				line_targets = line_targets.reshape(-1, 4)
+				
+				width = im_data.shape[3]
+				height = im_data.shape[2]
+				# 在这里加上targets的偏移
+				
+				line_quant_anchors = quant_anchors.reshape(-1, 4)
+				pred_boxes = box_utils.onedim_bbox_transform(line_quant_anchors, line_targets)
+				pred_boxes = box_utils.clip_tiled_boxes(pred_boxes, (height, width, 3))
+				
+				im = im_data.detach().cpu().numpy().reshape(3, height, width).transpose((1, 2, 0))
+				
+				means = np.squeeze(cfg.PIXEL_MEANS)
+				for i in range(3):
+					im[:, :, i] += means[i]
+				
+				im = im.astype(int)
+				dpi = 200
+				fig = plt.figure(frameon = False)
+				fig.set_size_inches(im.shape[1] / dpi, im.shape[0] / dpi)
+				ax = plt.Axes(fig, [0., 0., 1., 1.])
+				ax.axis('off')
+				fig.add_axes(ax)
+				ax.imshow(im[:, :, ::-1])
+				# 在im上添加gt
+				for item in gt_boxes:
+					ax.add_patch(
+						plt.Rectangle((item[0], item[1]),
+						              item[2] - item[0],
+						              item[3] - item[1],
+						              fill = False, edgecolor = 'white',
+						              linewidth = 1, alpha = 1))
+				
+				cnt = 0
+				for inds, before_item in enumerate(line_quant_anchors):
+					after_item = pred_boxes[inds]
+					targets_i = line_targets[inds]
+					if np.sum(targets_i) == 0:
+						continue
+					ax.add_patch(
+						plt.Rectangle((before_item[0], before_item[1]),
+						              before_item[2] - before_item[0],
+						              before_item[3] - before_item[1],
+						              fill = False, edgecolor = 'r',
+						              linewidth = 1, alpha = 1))
+					
+					ax.add_patch(
+						plt.Rectangle((after_item[0], after_item[1]),
+						              after_item[2] - after_item[0],
+						              after_item[3] - after_item[1],
+						              fill = False, edgecolor = 'g',
+						              linewidth = 1, alpha = 1))
+					
+					logger.info("valid boxes: {}".format(cnt))
+					cnt += 1
+				
+				if cnt != 0:
+					ticks = time.time()
+					fig.savefig("/nfs/project/libo_i/Boosting/Targets_Info/{}.png".format(ticks), dpi = dpi)
+				
+				plt.close('all')
+			
 			if cfg.FPN.FPN_ON:
 				for i, lvl in enumerate(range(cfg.FPN.RPN_MIN_LEVEL, cfg.FPN.RPN_MAX_LEVEL + 1)):
 					return_dict['losses']['loss_rpn_cls_fpn%d' % lvl] = loss_rpn_cls[i]
@@ -200,12 +295,18 @@ class Generalized_RCNN(nn.Module):
 			loss_cls, loss_bbox, accuracy_cls = fast_rcnn_heads.fast_rcnn_losses(cls_score, bbox_pred, rpn_ret['labels_int32'],
 			                                                                     rpn_ret['bbox_targets'], rpn_ret['bbox_inside_weights'],
 			                                                                     rpn_ret['bbox_outside_weights'])
-			if cfg.RPN.QUANT_TARGET:
-				loss_cls.requires_grad = False
-				loss_bbox.requires_grad = False
-
-			return_dict['losses']['loss_cls'] = loss_cls
-			return_dict['losses']['loss_bbox'] = loss_bbox
+			if cfg.RPN.ZEROLOSS:
+				zero_loss_bbox = torch.Tensor([0.]).squeeze().cuda()
+				zero_loss_bbox.requires_grad = True
+				zero_loss_cls = torch.Tensor([0.]).squeeze().cuda()
+				zero_loss_cls.requires_grad = True
+				return_dict['losses']['loss_bbox'] = zero_loss_bbox
+				return_dict['losses']['loss_cls'] = zero_loss_cls
+			
+			else:
+				return_dict['losses']['loss_bbox'] = loss_bbox
+				return_dict['losses']['loss_cls'] = loss_cls
+			
 			return_dict['metrics']['accuracy_cls'] = accuracy_cls
 			
 			if cfg.MODEL.MASK_ON:

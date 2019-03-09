@@ -202,6 +202,9 @@ def _get_rpn_blobs(im_height, im_width, foas, all_anchors, gt_boxes):
 			end_idx = start_idx + foa.field_size * foa.field_size * foa.num_cell_anchors
 			# 这里取出的是inds_inside里面符合range的框的位置，我们还要将这些index提取出来
 			inds = np.intersect1d(np.where(inds_inside < end_idx)[0], np.where(inds_inside >= start_idx)[0])
+			if inds.size == 0:
+				continue
+			
 			# level_range_inds中保存的是符合start_ids <= [....] < end_idx这一个indices序列
 			level_range_inds = inds_inside[inds]
 			start_idx = end_idx
@@ -257,6 +260,24 @@ def _get_rpn_blobs(im_height, im_width, foas, all_anchors, gt_boxes):
 	# Split the generated labels, etc. into labels per each field of anchors
 	blobs_out = []
 	start_idx = 0
+	
+	if cfg.RPN.VIS_QUANT_TARGET:
+		sample_start_idx = 336 * 336 * 3
+		sample_end_idx = 336 * 336 * 3 + 168 * 168 * 3
+		sample_anchors = all_anchors[sample_start_idx:sample_end_idx]
+		
+		import json
+		import os
+		path = "/nfs/project/libo_i/Boosting/Targets_Info"
+		if not os.path.exists(path):
+			os.makedirs(path)
+		
+		# 这里有3个尺度的框，只留中间尺度的框
+		sample_anchors = sample_anchors[1::3, :]
+		sample_anchors = sample_anchors.reshape(168, 168, 4)
+		with open(os.path.join(path, "quant_anchors.json"), "w") as fp:
+			json.dump(sample_anchors.tolist(), fp)
+	
 	for foa in foas:
 		H = foa.field_size
 		W = foa.field_size
