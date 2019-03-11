@@ -192,7 +192,6 @@ def _get_rpn_blobs(im_height, im_width, foas, all_anchors, gt_boxes):
 		enable_inds = bg_inds[npr.randint(len(bg_inds), size = num_bg)]
 		labels[enable_inds] = 0
 	bg_inds = np.where(labels == 0)[0]
-	
 	bbox_targets = np.zeros((num_inside, 4), dtype = np.float32)
 	if cfg.RPN.QUANT_TARGET:
 		start_idx = 0
@@ -277,6 +276,12 @@ def _get_rpn_blobs(im_height, im_width, foas, all_anchors, gt_boxes):
 		sample_anchors = sample_anchors.reshape(168, 168, 4)
 		with open(os.path.join(path, "quant_anchors.json"), "w") as fp:
 			json.dump(sample_anchors.tolist(), fp)
+	
+	if cfg.RPN.DOWNSAMPLE_TARGET:
+		start_idx = 0
+		# 1:336, 2:168, 3:84 4:42 5:21
+		for inds, foa in enumerate(foas):
+			end_idx = start_idx + foa.field_size * foa.field_size * foa.num_cell_anchors
 	
 	for foa in foas:
 		H = foa.field_size

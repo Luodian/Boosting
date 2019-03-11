@@ -656,6 +656,7 @@ __C.RPN.RPN_ON = False
 __C.RPN.QUANT_TARGET = False
 __C.RPN.ZEROLOSS = False
 __C.RPN.VIS_QUANT_TARGET = False
+__C.RPN.DOWNSAMPLE_TARGET = False
 
 # `True` for Detectron implementation. `False` for jwyang's implementation.
 __C.RPN.OUT_DIM_AS_IN_DIM = True

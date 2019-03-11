@@ -300,7 +300,7 @@ class Generalized_RCNN(nn.Module):
 				zero_loss_bbox.requires_grad = True
 				zero_loss_cls = torch.Tensor([0.]).squeeze().cuda()
 				zero_loss_cls.requires_grad = True
-				return_dict['losses']['loss_bbox'] = zero_loss_bbox
+				return_dict['losses']['loss_bbox'] =  zero_loss_bbox
 				return_dict['losses']['loss_cls'] = zero_loss_cls
 			
 			else:
